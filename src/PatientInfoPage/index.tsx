@@ -1,7 +1,7 @@
 import React from "react";
 import axios from "axios";
 import { useParams } from "react-router-dom";
-import { useStateValue } from "../state";
+import { useStateValue, updatePatient } from "../state";
 import { Container, Icon, Header } from "semantic-ui-react";
 
 
@@ -27,7 +27,7 @@ const PatientInfoPage: React.FC = () => {
                             `${apiBaseUrl}/patients/${id}`
                         );
                         
-                        dispatch({ type: "UPDATE_PATIENT", payload: patientDataFromApi });
+                        dispatch(updatePatient(patientDataFromApi));
                     } catch (e) {
                         console.error(e);
                     }
