@@ -12,9 +12,9 @@ type GenderIconCode = "mars" | "venus" | "genderless";
 
 
 const PatientInfoPage: React.FC = () => {
-    const [state, dispatch] = useStateValue();
+    const [{ patients }, dispatch] = useStateValue();
     const { id } = useParams<{ id: string }>();
-    const findPatient = state.patients[id];
+    const findPatient = patients[id];
 
     React.useEffect(() => {
         console.log("Patient Info");
