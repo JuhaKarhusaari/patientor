@@ -26,7 +26,7 @@ const PatientInfoPage: React.FC = () => {
                         const { data: patientDataFromApi } = await axios.get<Patient>(
                             `${apiBaseUrl}/patients/${id}`
                         );
-                        
+                        console.log(patientDataFromApi);
                         dispatch(updatePatient(patientDataFromApi));
                     } catch (e) {
                         console.error(e);
