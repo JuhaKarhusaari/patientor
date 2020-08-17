@@ -63,7 +63,7 @@ export const addPatient = (patient: Patient): Action => {
   };
 };
 
-export const updatePatient = (patient: Patient): Action => {
+export const updatePatient =  (patient: Patient): Action => {
   return {
     type: "UPDATE_PATIENT",
     payload: patient,
