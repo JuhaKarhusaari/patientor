@@ -5,7 +5,7 @@ import { useStateValue, updatePatient } from "../state";
 import { Container, Icon, Header } from "semantic-ui-react";
 
 
-import { Gender, Patient } from "../types";
+import { Gender, Patient, } from "../types";
 import { apiBaseUrl } from '../constants';
 
 type GenderIconCode = "mars" | "venus" | "genderless";
@@ -58,10 +58,27 @@ const PatientInfoPage: React.FC = () => {
     return (
         <div className="App">
             <Container textAlign="left">
-                <Header as="h3">{findPatient.name}<Icon name={whichGenderIcon(findPatient.gender)} size='large' /></Header>
+                <Header as="h2">{findPatient.name}<Icon name={whichGenderIcon(findPatient.gender)} size='large' /></Header>
                 {!findPatient.ssn ? <p></p> : <p>{`ssn : ${findPatient.ssn}`}</p>}
                 <p>{`occupation : ${findPatient.occupation}`}</p>
-                <p>{`data of birth : ${findPatient.dateOfBirth}`}</p>
+                
+                {findPatient.entries && findPatient.entries.length > 0 
+                    ? <div>
+                        <Header as="h3">entries</Header>
+                        {findPatient.entries.map((n) => {
+                            if (n.diagnosisCodes) {
+                                return (
+                                    <div key={n.description}>
+                                        <p key={n.description}>{n.date} {n.description}</p>
+                                        {n.diagnosisCodes.map( code => <li key={code}>{code}</li> )}
+                                    </div>
+                                );
+                            }
+                            return <p key={n.description}>{n.date} {n.description}</p>;
+                        })}
+                    </div>
+                    : null
+                }
             </Container>
         </div>
     );
