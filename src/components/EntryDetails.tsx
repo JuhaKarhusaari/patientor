@@ -1,34 +1,19 @@
-import React, { useState } from "react";
-import axios from "axios";
-import { apiBaseUrl } from '../constants';
+import React from "react";
 
 // Components
 import HealthRatingBar from "./HealthRatingBar";
 import { Header, Icon } from "semantic-ui-react";
 
 // Types & Utils
-import { Entry, Diagnosis } from "../types";
+import { Entry } from "../types";
 import { assertNever } from "../utils";
 
-const EntryDetails: React.FC<{ entry: Entry }> = ({ entry }) => {
-    const [diagnoses, setDiagnoses] = useState<Map<string, string>>();
+// Reducers & State
+import { useStateValue } from "../state";
 
-    React.useEffect(() => {
-        const fetchDiagnoses = async () => {
-            try {
-                const { data: diagnosesFromApi } = await axios.get<Diagnosis[]>(
-                    `${apiBaseUrl}/diagnoses`
-                );
-                const diagnoseMap = new Map();
-                diagnosesFromApi.map(n => diagnoseMap.set(n.code, n.name));
-                setDiagnoses(diagnoseMap);
-            } catch (e) {
-                console.error(e);
-            }
-        };
-        fetchDiagnoses();
-    }, []);
-
+const EntryDetails: React.FC<{ entry: Entry }> = ({ entry }) => {  
+    const [{ diagnoses }] = useStateValue();
+   
     switch (entry.type) {
         case "Hospital":
             return (
@@ -37,7 +22,7 @@ const EntryDetails: React.FC<{ entry: Entry }> = ({ entry }) => {
                     <p>{entry.description}</p>
                     {entry.diagnosisCodes && diagnoses 
                         ? entry.diagnosisCodes.map(code =>
-                            <li key={code}><strong>{code}</strong> {diagnoses.has(code) ? diagnoses.get(code) : null}</li>
+                            <li key={code}><strong>{code}</strong> {diagnoses[code] ? diagnoses[code].name : null}</li>
                             )
                         : null
                     }
@@ -50,7 +35,7 @@ const EntryDetails: React.FC<{ entry: Entry }> = ({ entry }) => {
                     <p>{entry.description}</p>
                     {entry.diagnosisCodes && diagnoses
                         ? entry.diagnosisCodes.map(code =>
-                            <li key={code}><strong>{code}</strong> {diagnoses.has(code) ? diagnoses.get(code) : null}</li>
+                            <li key={code}><strong>{code}</strong> {diagnoses[code] ? diagnoses[code].name : null}</li>
                         )
                         : null
                     }
