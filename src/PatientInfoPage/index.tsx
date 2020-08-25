@@ -3,8 +3,9 @@ import axios from "axios";
 import { useParams } from "react-router-dom";
 import { useStateValue, updatePatient } from "../state";
 
-import { Container, Icon, Header } from "semantic-ui-react";
+import { Container, Icon, Header, Button, } from "semantic-ui-react";
 import EntryDetails from "../components/EntryDetails";
+import AddEntryModal from "../AddEntryModal";
 
 import { Gender, Patient } from "../types";
 import { apiBaseUrl } from '../constants';
@@ -13,6 +14,8 @@ type GenderIconCode = "mars" | "venus" | "genderless";
 
 const PatientInfoPage: React.FC = () => {
     const [{ patients }, dispatch] = useStateValue();
+    const [modalOpen, setModalOpen] = React.useState<boolean>(false);
+    const [error, setError] = React.useState<string | undefined>();
     const { id } = useParams<{ id: string }>();
     const findPatient = patients[id];
 
@@ -36,6 +39,13 @@ const PatientInfoPage: React.FC = () => {
         }
 
     }, [dispatch, findPatient, id]);
+
+    const openModal = (): void => setModalOpen(true);
+
+    const closeModal = (): void => {
+        setModalOpen(false);
+        setError(undefined);
+    };
 
     const whichGenderIcon = (gender: Gender): GenderIconCode => {
         switch (gender) {
@@ -75,6 +85,12 @@ const PatientInfoPage: React.FC = () => {
                     </div>
                     : null
                 }
+                <AddEntryModal 
+                    modalOpen={modalOpen}
+                    error={error}
+                    onClose={closeModal}
+                />
+                <Button onClick={() => openModal()}>Add New Entry</Button>
             </Container>
         </div>
     );
