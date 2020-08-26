@@ -35,7 +35,7 @@ interface HospitalDischarge {
   criteria: string;
 }
 
-interface HospitalEntry extends BaseEntry {
+export interface HospitalEntry extends BaseEntry {
   type: "Hospital";
   discharge: HospitalDischarge;
 }

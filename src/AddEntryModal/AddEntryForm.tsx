@@ -4,10 +4,10 @@ import { Field, Formik, Form } from "formik";
 
 import { useStateValue } from "../state";
 import { TextField, DiagnosisSelection } from "../AddPatientModal/FormField";
-import { Entry } from "../types";
+import { HospitalEntry } from "../types";
+// import { Entry, } from "../types";
 
-
-export type AddEntryValues = Omit<Entry, "id">;
+export type AddEntryValues = Omit<HospitalEntry, "id">;
 
 interface Props {
     onSubmit: (values: AddEntryValues) => void;
@@ -25,6 +25,7 @@ const AddEntryForm: React.FC<Props> = ({ onSubmit, onCancel }) => {
                 diagnosisCodes: [],
                 date: "",
                 specialist: "",
+                discharge: { date: "", criteria: ""}
             }}
             onSubmit={onSubmit}
             validate={values => {
@@ -34,10 +35,13 @@ const AddEntryForm: React.FC<Props> = ({ onSubmit, onCancel }) => {
                     errors.date = requiredError;
                 }
                 if (!values.description) {
-                    errors.ssn = requiredError;
+                    errors.description = requiredError;
                 }
                 if (!values.specialist) {
-                    errors.dateOfBirth = requiredError;
+                    errors.specialist = requiredError;
+                }
+                if (!values.discharge.date || !values.discharge.criteria) {
+                    errors.discharge = requiredError;
                 }
                 return errors;
             }}
@@ -67,6 +71,19 @@ const AddEntryForm: React.FC<Props> = ({ onSubmit, onCancel }) => {
                             setFieldValue={setFieldValue}
                             setFieldTouched={setFieldTouched}
                             diagnoses={Object.values(diagnoses)}
+                        />
+                        <h3>Discharge</h3>
+                        <Field
+                            label="Date"
+                            placeholder="YYYY-MM-DD"
+                            name="discharge.date"
+                            component={TextField}
+                        />
+                        <Field
+                            label="Criteria"
+                            placeholder="type criteria..."
+                            name="discharge.criteria"
+                            component={TextField}
                         />
                         <Grid>
                             <Grid.Column floated="left" width={5}>

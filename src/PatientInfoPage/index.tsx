@@ -7,7 +7,8 @@ import { Container, Icon, Header, Button, } from "semantic-ui-react";
 import EntryDetails from "../components/EntryDetails";
 import AddEntryModal from "../AddEntryModal";
 
-import { Gender, Patient } from "../types";
+import { Gender, Patient, Entry } from "../types";
+import { AddEntryValues } from "../AddEntryModal/AddEntryForm";
 import { apiBaseUrl } from '../constants';
 
 type GenderIconCode = "mars" | "venus" | "genderless";
@@ -40,6 +41,7 @@ const PatientInfoPage: React.FC = () => {
 
     }, [dispatch, findPatient, id]);
 
+    // AddEntryModal handle
     const openModal = (): void => setModalOpen(true);
 
     const closeModal = (): void => {
@@ -47,6 +49,28 @@ const PatientInfoPage: React.FC = () => {
         setError(undefined);
     };
 
+    // Add new entry
+    const submitNewEntry = async (values: AddEntryValues) => {
+        try {
+            const { data: newEntry } = await axios.post<Entry>(
+                `${apiBaseUrl}/patients/${id}/entries`,
+                values
+            );
+            if (typeof findPatient !== 'undefined' && findPatient.entries) {
+                const updatedPatient = {
+                    ...findPatient,
+                    entries: findPatient.entries.concat(newEntry)
+                };
+                dispatch(updatePatient(updatedPatient));
+            }
+           
+        } catch (e) {
+            console.error(e.message);
+        }
+
+    };
+
+    // Gender icon handle
     const whichGenderIcon = (gender: Gender): GenderIconCode => {
         switch (gender) {
             case Gender.Male:
@@ -89,6 +113,7 @@ const PatientInfoPage: React.FC = () => {
                     modalOpen={modalOpen}
                     error={error}
                     onClose={closeModal}
+                    onSubmit={submitNewEntry}
                 />
                 <Button onClick={() => openModal()}>Add New Entry</Button>
             </Container>
