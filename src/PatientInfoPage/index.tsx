@@ -7,6 +7,7 @@ import { Container, Icon, Header, Button, } from "semantic-ui-react";
 import EntryDetails from "../components/EntryDetails";
 import AddEntryModal from "../AddEntryModal";
 
+
 import { Gender, Patient, Entry } from "../types";
 import { AddEntryValues } from "../AddEntryModal/AddEntryForm";
 import { apiBaseUrl } from '../constants';
@@ -19,6 +20,14 @@ const PatientInfoPage: React.FC = () => {
     const [error, setError] = React.useState<string | undefined>();
     const { id } = useParams<{ id: string }>();
     const findPatient = patients[id];
+
+    React.useEffect(() => {
+        if (error) {
+            setTimeout(() => {
+                setError(undefined);
+            }, 5000);
+        }
+    }, [error]);
 
     React.useEffect(() => {
         axios.get<void>(`${apiBaseUrl}/ping`);
@@ -35,10 +44,8 @@ const PatientInfoPage: React.FC = () => {
                     }
                 };
                 fetchPatientList();
+            }
         }
-        
-        }
-
     }, [dispatch, findPatient, id]);
 
     // AddEntryModal handle
@@ -65,6 +72,7 @@ const PatientInfoPage: React.FC = () => {
             }
            
         } catch (e) {
+            setError("Error. Some required values are missing or formatted incorrectly.");
             console.error(e.message);
         }
 
