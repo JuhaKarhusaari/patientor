@@ -1,9 +1,10 @@
 import React from 'react';
 import { Modal } from 'semantic-ui-react';
-import AddEntryForm, { AddEntryValues } from './AddEntryForm';
-// import AddPatientForm, { PatientFormValues } from './AddPatientForm';
+import AddEntryForm from './AddEntryForm';
 import Notification from "../components/Notification";
-// <Segment inverted color="red">{`Error: ${error}`}</Segment>
+
+import { AddEntryValues } from "../types";
+
 interface Props {
     modalOpen: boolean;
     onClose: () => void;

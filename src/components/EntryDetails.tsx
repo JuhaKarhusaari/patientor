@@ -46,7 +46,7 @@ const EntryDetails: React.FC<{ entry: Entry }> = ({ entry }) => {
                 <div className="ui segment" >
                     <Header as="h3">{entry.date} <Icon name="user doctor" /></Header>
                     <p>{entry.description}</p>
-                    <HealthRatingBar rating={entry.healthCheckRating} showText={false} />
+                    <HealthRatingBar rating={entry.healthCheckRating} showText={true} />
                 </div>
             );
         default:

@@ -9,7 +9,7 @@ import AddEntryModal from "../AddEntryModal";
 
 
 import { Gender, Patient, Entry } from "../types";
-import { AddEntryValues } from "../AddEntryModal/AddEntryForm";
+import { AddEntryValues } from "../types";
 import { apiBaseUrl } from '../constants';
 
 type GenderIconCode = "mars" | "venus" | "genderless";
@@ -21,6 +21,7 @@ const PatientInfoPage: React.FC = () => {
     const { id } = useParams<{ id: string }>();
     const findPatient = patients[id];
 
+    // Reset error message & hide notification 
     React.useEffect(() => {
         if (error) {
             setTimeout(() => {
@@ -72,8 +73,8 @@ const PatientInfoPage: React.FC = () => {
             }
            
         } catch (e) {
-            setError("Error. Some required values are missing or formatted incorrectly.");
-            console.error(e.message);
+            setError(`Error. ${e.response.data}`);
+            console.error(e.message + ".", e.response.data);
         }
 
     };

@@ -1,49 +1,61 @@
 import React from "react";
-import { Grid, Button } from "semantic-ui-react";
+import { Grid, Button, Container, Dropdown, DropdownProps } from "semantic-ui-react";
 import { Field, Formik, Form } from "formik";
 
 import { useStateValue } from "../state";
 import { TextField, DiagnosisSelection } from "../AddPatientModal/FormField";
-import { HospitalEntry } from "../types";
-// import { Entry, } from "../types";
-
-export type AddEntryValues = Omit<HospitalEntry, "id">;
+import { AddEntryValues, EntryType } from "../types";
+import { EntryFields, entryValidateHelper, initialValues } from "./EntryFormUtils";
 
 interface Props {
     onSubmit: (values: AddEntryValues) => void;
     onCancel: () => void;
 }
 
+// structure of a single option
+export type EntryOption = {
+    value: EntryType;
+    label: string;
+};
+
+const entryOptions: EntryOption[] = [
+    { value: EntryType.Hospital, label: "Hospital" },
+    { value: EntryType.HealthCheck, label: "HealthCheck" },
+    { value: EntryType.OccupationalHealthcare, label: "OccupationalHealthcare" }
+];
+
+
 const AddEntryForm: React.FC<Props> = ({ onSubmit, onCancel }) => {
     const [{ diagnoses }] = useStateValue();
+    const [ entryType, setEntryType ] = React.useState<EntryType | undefined>();
+
+    const onChange = (
+        _event: React.SyntheticEvent<HTMLElement, Event>,
+        data: DropdownProps
+    ) => {
+        setEntryType(data.value as EntryType);
+    };
+    if (!entryType) {
+        return (
+            <Container>
+                <Dropdown
+                    placeholder='Select entry type'
+                    fluid
+                    selection
+                    closeOnChange
+                    options={entryOptions}
+                    onChange={onChange}
+                />
+            </Container>
+        );
+    }
 
     return (
         <Formik
-            initialValues={{
-                type: "Hospital",
-                description: "",
-                diagnosisCodes: [],
-                date: "",
-                specialist: "",
-                discharge: { date: "", criteria: ""}
-            }}
+            initialValues={initialValues(entryType)}
             onSubmit={onSubmit}
             validate={values => {
-                const requiredError = "Field is required";
-                const errors: { [field: string]: string } = {};
-                if (!values.date) {
-                    errors.date = requiredError;
-                }
-                if (!values.description) {
-                    errors.description = requiredError;
-                }
-                if (!values.specialist) {
-                    errors.specialist = requiredError;
-                }
-                if (!values.discharge.date || !values.discharge.criteria) {
-                    errors.discharge = requiredError;
-                }
-                return errors;
+               entryValidateHelper(values);
             }}
         >
             {({ isValid, dirty, setFieldValue, setFieldTouched }) => {
@@ -72,19 +84,7 @@ const AddEntryForm: React.FC<Props> = ({ onSubmit, onCancel }) => {
                             setFieldTouched={setFieldTouched}
                             diagnoses={Object.values(diagnoses)}
                         />
-                        <h3>Discharge</h3>
-                        <Field
-                            label="Date"
-                            placeholder="YYYY-MM-DD"
-                            name="discharge.date"
-                            component={TextField}
-                        />
-                        <Field
-                            label="Criteria"
-                            placeholder="type criteria..."
-                            name="discharge.criteria"
-                            component={TextField}
-                        />
+                        <EntryFields entry={entryType} />
                         <Grid>
                             <Grid.Column floated="left" width={5}>
                                 <Button type="button" onClick={onCancel} color="red">
